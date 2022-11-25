@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<style>
+    body {
+        font-family: Verdana, sans-serif;
+    }
+    h1, h2 {
+        text-align: center;
+    }
+    table {
+        border-collapse: collapse;
+        border: 1px solid black;
+        width: 100%;
+    }
+    table, th, td {
+        border: 1px solid black;
+        border-collapse: collapse;
+    }
+    td, th {
+        padding: 5px;
+        text-align: center;
+    }
+
+    .table_box {
+        width: 100%;
+    }
+
+    .table_item {
+        display: inline-block;
+        width: 48%;
+    }
+
+    .table_item:first-child {
+        margin-right: 2%;
+    }
+</style>
+<h1>Аналитика по зарплатам и городам для профессии {{work_name}}</h1>
+<img src="file:///C:/Users/Dp228/OneDrive/Рабочий стол/danila_petrov/graph.png" alt="graph" style="margin: 0 auto; display: block; width: 100%;">
+<h2>Статистика по годам</h2>
+<table>
+    {{table_general}}
+</table>
+<h2>Статистика по городам</h2>
+<div class="table_box">
+    <div class="table_item"><table>{{table_salary}}</table></div>
+    <div class="table_item"><table>{{table_perc}}</table></div>
+</div>
+</body>
+</html>
