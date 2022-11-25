@@ -41,7 +41,7 @@ russian = {
 class InputConnect:
     def __init__(self):
         selection = input('Вакансии или Статистика: ').strip()
-        if selection == "Вакансии":
+        if selection == "  Вакансии".strip():
             self.file_name = input('Введите название файла: ').strip()
             self.filter_data = list(filter(lambda e: e != "", input('Введите параметр фильтрации: ').split(': ')))
             self.sort_key = input('Введите параметр сортировки: ').strip()
