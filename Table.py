@@ -6,7 +6,37 @@ from Vacancy import Vacancy
 
 
 class Table:
+    """Класс для обработки датасета и вывода данных в виде таблицы
+
+    Attributes:
+        file_name (str): Название файла
+        filter_data (list(str, str)): Список с фильтруемым параметром и его значением
+        sort_key (str): Параметр сортировки
+        is_reversed_sort (bool): Обратная ли сортировка
+        table_ranges list(int, int): Диапазон вывода строк таблицы
+        fields list(str): Необходимые для вывода столбцы
+        __translation dict(str, str): Словарь перевода
+        __reversed_translation dict(str, str): Обратный словарь для перевода
+        dataset (DataSet): Датасет вакансий
+    """
     def __init__(self, file_name, filter_data, sort_key, is_reversed_sort, table_ranges, fields, translation):
+        """ Создает объект Table
+
+        :param file_name: Название файла
+        :type file_name: str
+        :param filter_data: Список с фильтруемым параметром и его значением
+        :type filter_data: list[str, str]
+        :param sort_key: Параметр сортировки
+        :type sort_key: str
+        :param is_reversed_sort: Обратная ли сортировка
+        :type is_reversed_sort: bool
+        :param table_ranges: Диапазон вывода строк таблицы
+        :type table_ranges: list[int]
+        :param fields: Необходимые для вывода столбцы
+        :type fields: list[str]
+        :param translation: Словарь перевода
+        :type translation: dict[str, str]
+        """
         self.file_name = file_name
         self.filter_data = filter_data
         self.sort_key = sort_key
@@ -18,6 +48,10 @@ class Table:
         self.dataset = DataSet(self.file_name)
 
     def filter_vacancies(self):
+        """
+        Фильтрует вакансии по заданному критерию
+        :return: None
+        """
         if not len(self.filter_data):
             return
         filtered: list[Vacancy] = []
@@ -48,6 +82,10 @@ class Table:
         self.dataset.vacancies_objects = filtered
 
     def sort_vacancies(self):
+        """
+        Сортирует вакансии по заданному критерию
+        :return:
+        """
         if not self.sort_key and self.dataset.vacancies_objects:
             return
         is_reversed = True if self.is_reversed_sort == 'Да' else False
@@ -70,6 +108,10 @@ class Table:
         self.dataset.vacancies_objects.sort(key=sort_func, reverse=is_reversed)
 
     def print_table(self):
+        """
+        Выводит таблицу с конечными с отфильтрованными и отсортированными данными
+        :return: None
+        """
         if not self.dataset.vacancies_objects:
             return
         table = PrettyTable()

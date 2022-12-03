@@ -9,7 +9,24 @@ from jinja2 import Environment, FileSystemLoader
 
 
 class Report:
+    """Класс для составления отчетов о вакансиях
+
+    Attributes:
+        work_name (str): Название вакансии
+        city_perc (dict(str, int)): Словарь с информацией долях вакансий по городам
+        salary_city (dict(str, int)): Словарь с информацией о уровнях зарплат по городам
+        count_worker (dict(str, int)): Словарь с динамикой количества вакансий по годам для выбранной профессии
+        salary_worker (dict(str, int)): Словарь с динамикой уровня зарплат по годам для выбранной профессии
+        count (dict(str, int)): Словарь с динамикой количества вакансий по годам
+        salary (dict(str, int)): Словарь с динамикой уровня зарплат по годам
+    """
+
     def __init__(self, stats: Statistic):
+        """ Инициализирует объект Report
+
+        :param stats: Статистика
+        :type stats: Statistic
+        """
         self.work_name = stats.work_name
         self.salary: dict = stats.salary
         self.salary_worker: dict = stats.salary_worker
@@ -19,6 +36,11 @@ class Report:
         self.city_perc: dict = stats.city_perc
 
     def generate_excel(self):
+        """
+        Генерирует Excel таблицу с данными из статистики
+        :return: None
+        :rtype: None
+        """
         wb = Workbook()
 
         # Статистика по годам
@@ -67,6 +89,10 @@ class Report:
         wb.save('report.xlsx')
 
     def generate_image(self):
+        """
+        Создает изображение с графиками
+        :return: None
+        """
         pos = np.arange(len(self.salary.keys()))
         plt.rc('font', size=8)
         width = 0.35
@@ -110,7 +136,10 @@ class Report:
         plt.savefig('graph.png', dpi=300)
 
     def generate_pdf(self):
-
+        """
+        Создает pdf отчет с таблицами и графиком
+        :return:
+        """
         config = pdfkit.configuration(wkhtmltopdf=r'F:\Programs\wkhtmltopdf\bin\wkhtmltopdf.exe')
         env = Environment(loader=FileSystemLoader('.'))
         table_general = f'<tr>' \

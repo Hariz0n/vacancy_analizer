@@ -2,7 +2,28 @@ from DataSet import DataSet
 
 
 class Statistic:
+    """
+    Класс для сбора статистики о вакансиях
+
+    Attributes:
+        city_perc (dict(str, int)): Словарь с информацией долях вакансий по городам
+        salary_city (dict(str, int)): Словарь с информацией о уровнях зарплат по городам
+        count_worker (dict(str, int)): Словарь с динамикой количества вакансий по годам для выбранной профессии
+        salary_worker (dict(str, int)): Словарь с динамикой уровня зарплат по годам для выбранной профессии
+        count (dict(str, int)): Словарь с динамикой количества вакансий по годам
+        salary (dict(str, int)): Словарь с динамикой уровня зарплат по годам
+        statistic (dict(str, dict)): Словарь со всей необработанной статистикой
+        dataset (DataSet): Датасет вакансий
+        work_name (str): Название профессии
+    """
     def __init__(self, dataset: DataSet, work_name: str):
+        """ Инициализирует объект Statistic
+
+        :param dataset: Датасет вакансий
+        :type dataset: DataSet
+        :param work_name: Название профессии
+        :type work_name: str
+        """
         self.city_perc = None
         self.salary_city = None
         self.count_worker = None

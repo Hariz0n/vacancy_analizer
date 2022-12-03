@@ -5,11 +5,22 @@ import re
 
 
 class DataSet:
+    """Класс представляющий датасет вакансий HH.ru"""
     def __init__(self, file_name):
+        """
+
+        :param file_name: Имя файла
+        :rtype: str
+        """
         self.file_name: str = file_name
         self.vacancies_objects: list[Vacancy] = self.csv_parser()
 
     def csv_parser(self):
+        """Метод парсинга CSV файлов
+
+        :return: Список типов Vacancy
+        :rtype: list(Vacancy)
+        """
         headers = None
         vacancies_list = []
         with open(self.file_name, 'r', encoding='utf-8-sig') as csvfile:

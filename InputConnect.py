@@ -39,7 +39,10 @@ russian = {
 }
 
 class InputConnect:
+    """ Класс-интерфейс для сбора вводимой информации пользователем для последующего использования
+    """
     def __init__(self):
+        """Инициализирует объект класса InputConnect"""
         selection = input('Вакансии или Статистика: ').strip()
         if selection == "  Вакансии".strip():
             self.file_name = input('Введите название файла: ').strip()
@@ -68,6 +71,12 @@ class InputConnect:
                 report.generate_pdf()
 
     def is_valid(self, isTable=False) -> bool:
+        """Проверяет валидность введенных данных
+
+        :param isTable: Проверка на тип выводимой информации
+        :return: Валидны ли значения
+        :rtype: bool
+        """
         if os.stat(self.file_name).st_size == 0:
             print("Пустой файл")
             return False
