@@ -25,6 +25,11 @@ class Salary:
         """Инициализирует объект Salary, вычисляет среднюю зарплату
 
         :param dict salary: Словарь содержащий поля salaru_* - from, to, gross, currency
+
+        >>> Salary({"salary_from": 1000,"salary_to": 5000,"salary_gross": 'False',"salary_currency": "RUR"}).convert_currency_average()
+        3000
+        >>> type(Salary({"salary_from": 1000,"salary_to": '5000',"salary_gross": 'False',"salary_currency": "RUR"}).salary_to)
+        <class 'int'>
         """
         for key in salary:
             try:
@@ -41,3 +46,7 @@ class Salary:
         :rtype: float
         """
         return self.salary_average * self._currency_to_rub[self.salary_currency]
+
+if __name__ == "__main__":
+    import doctest
+    doctest.testmod()
