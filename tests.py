@@ -31,16 +31,18 @@ class SalaryTests(TestCase):
         self.assertTrue(sObj.salary_average == 3000, 'Не правильно посчитана средняя зарплата')
 
     def test_correct_currency_convert(self):
-        self.assertTrue(Salary({'salary_from': 1000, 'salary_to': 1000, 'salary_currency': "USD"}).convert_currency_average(), 60660.0)
+        self.assertTrue(
+            Salary({'salary_from': 1000, 'salary_to': 1000, 'salary_currency': "USD"}).convert_currency_average(),
+            60660.0)
 
 
 class VacancyTests(TestCase):
     static_salary = Salary({
-            "salary_from": 1000,
-            "salary_to": 5000,
-            "salary_gross": 'False',
-            "salary_currency": "RUR"
-        })
+        "salary_from": 1000,
+        "salary_to": 5000,
+        "salary_gross": 'False',
+        "salary_currency": "RUR"
+    })
     static_Vacancy = Vacancy({
         'name': 'designer',
         "description": 'UI\\UX designer',
@@ -51,8 +53,6 @@ class VacancyTests(TestCase):
         'area_name': 'Prague',
         'published_at': '2022-07-05T18:19:30+0300'
     }, static_salary)
-
-
 
     def test_all_types_correct(self):
         self.assertTrue(type(self.static_Vacancy.name) == str)
@@ -87,6 +87,7 @@ class DataSetTests(TestCase):
             self.assertEqual(len(dataset.vacancies_objects), 0, 'Неправильно обработан csv файла')
         except:
             self.fail('No such file: empty.csv')
+
 
 class StatisticTests(TestCase):
 

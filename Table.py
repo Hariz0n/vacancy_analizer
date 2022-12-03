@@ -1,8 +1,10 @@
 import re
+import time
 from datetime import datetime
 from prettytable import PrettyTable, ALL
 from DataSet import DataSet
 from Vacancy import Vacancy
+from dateutil import parser
 
 
 class Table:
@@ -19,6 +21,9 @@ class Table:
         __reversed_translation dict(str, str): Обратный словарь для перевода
         dataset (DataSet): Датасет вакансий
     """
+
+    dataset = None
+
     def __init__(self, file_name, filter_data, sort_key, is_reversed_sort, table_ranges, fields, translation):
         """ Создает объект Table
 
@@ -129,7 +134,7 @@ class Table:
                     row_value = nl.join(value)
                     row.append(f"{row_value[:100]}{'...' if len(row_value) > 100 else ''}")
                 elif header == 'published_at':
-                    row.append(".".join(value[:10].split('-')[::-1]))
+                    row.append(self.date_by_cutting(value))
                 elif header == 'salary':
                     row.append(
                         f'{"{:,}".format(value.salary_from).replace(",", " ")} - '
@@ -151,3 +156,13 @@ class Table:
 
         print(table.get_string(start=self.table_ranges[0] - 1, end=self.table_ranges[1] - 1,
                                fields=['№', *self.fields] if len(self.fields) > 0 else table.field_names))
+
+    # def date_by_datetime_strptime(self, timestamp: str):
+    #     return datetime.strptime(timestamp, "%Y-%m-%dT%H:%M:%S%z").strftime('%d:%m:%Y')
+    #
+    #
+    # def date_by_dateutils_parser(self, timestamp: str):
+    #     return parser.parse(timestamp).strftime('%d:%m:%Y')
+
+    def date_by_cutting(self, timestamp: str):
+        return ".".join(timestamp[:10].split('-')[::-1])
