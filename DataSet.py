@@ -2,6 +2,8 @@ from Vacancy import Vacancy
 from Salary import Salary
 import csv
 import re
+import pandas as pd
+import os
 
 
 class DataSet:
@@ -13,7 +15,7 @@ class DataSet:
         :rtype: str
         """
         self.file_name: str = file_name
-        self.vacancies_objects: list[Vacancy] = self.csv_parser()
+        # self.vacancies_objects: list[Vacancy] = self.csv_parser()
 
     def csv_parser(self):
         """Метод парсинга CSV файлов
@@ -47,3 +49,13 @@ class DataSet:
             print('Нет данных')
         return vacancies_list
 
+    def csv_splitter(self):
+        """
+        Разделяет переданный csv файл по годам
+        :return: None
+        """
+        data = pd.read_csv(self.file_name)
+        years = data['published_at'].str[:4].unique()
+        for year in years:
+            os.makedirs('years', exist_ok=True)
+            data[data['published_at'].str[:4] == year].to_csv(f'years/{year}.csv')
