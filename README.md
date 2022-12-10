@@ -8,3 +8,6 @@
 ## 3.2.1
 ![11](https://user-images.githubusercontent.com/55204364/206684191-29082d95-2573-4e79-9401-8e7ba2eda8e8.png)
 ![12](https://user-images.githubusercontent.com/55204364/206684346-be9e28b4-c0c7-4fa3-b9df-0e24d9ff7946.png)
+## 3.2.2
+![time1 (2)](https://user-images.githubusercontent.com/55204364/206869354-f7915304-e055-486d-b5b8-3a9bd0f6f712.png)
+![time1](https://user-images.githubusercontent.com/55204364/206869357-c8529862-7f59-4932-a906-cc382823995c.png)
