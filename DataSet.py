@@ -1,61 +1,60 @@
 from Vacancy import Vacancy
 from Salary import Salary
-import csv
-import re
 import pandas as pd
-import os
 
 
 class DataSet:
     """Класс представляющий датасет вакансий HH.ru"""
-    def __init__(self, file_name):
-        """
+    _valid_columns = ["name",
+                      "description",
+                      "key_skills",
+                      "experience_id",
+                      "premium",
+                      "employer_name",
+                      "salary_from",
+                      "salary_to",
+                      "salary_gross",
+                      "salary_currency",
+                      "area_name",
+                      "published_at"]
 
-        :param file_name: Имя файла
-        :rtype: str
-        """
-        self.file_name: str = file_name
-        # self.vacancies_objects: list[Vacancy] = self.csv_parser()
+    def __init__(self, path: str):
+        """Создает инстанс класса DataSet
 
-    def csv_parser(self):
-        """Метод парсинга CSV файлов
-
-        :return: Список типов Vacancy
-        :rtype: list(Vacancy)
+        :param path: Название папки с csv файлами и одновременно название csv файла без расширения
         """
-        headers = None
-        vacancies_list = []
-        with open(self.file_name, 'r', encoding='utf-8-sig') as csvfile:
-            file = csv.reader(csvfile)
-            for line in file:
-                if headers is None:
-                    headers = line
-                    continue
-                if len(line) == len(headers) and '' not in line:
-                    primitives = {}
-                    salary = {}
-                    for column in range(len(line)):
-                        corr_value = [' '.join(re.sub(r'<[^>]+>', '', value).split()) for value in
-                                      line[column].split('\n')]
-                        if headers[column].startswith('salary'):
-                            salary[headers[column]] = " ".join(corr_value)
-                            continue
-                        if headers[column] == 'key_skills':
-                            primitives[headers[column]] = corr_value
-                            continue
-                        primitives[headers[column]] = " ".join(corr_value)
-                    vacancies_list.append(Vacancy(primitives, Salary(salary)))
-        if not vacancies_list:
+        self.path: str = path
+        self.vacs_list: list[Vacancy] = []
+
+    def csv_parser(self, file=None):
+        """Метод парсинга CSV файлов"""
+
+        if self.vacs_list:
+            print('Данные уже обработаны')
+            return
+
+        table = pd.read_csv(file if file else f'{self.path}.csv', engine="pyarrow").dropna()
+        if 'key_skills' in table.columns:
+            table['key_skills'] = table['key_skills'].str.split('\n')
+        if 'description' in table.columns:
+            table['description'] = table['description'].str.replace(r'<[^>]+>', '', regex=True) \
+                .str.replace("\s+", " ", regex=True) \
+                .str.split('\n| ', regex=True).str.join(' ')
+        columns: list[str] = table.columns.to_list()
+        for row in table.to_numpy():
+            data = dict([(k, None) for k in self._valid_columns])
+            for column in columns:
+                try:
+                    column_value = row.item(columns.index(column))
+                except ValueError:
+                    column_value = None
+                data[column] = column_value
+
+            self.vacs_list.append(Vacancy(data['name'], data['description'], data['key_skills'],
+                                          data['experience_id'], data['premium'], data['employer_name'],
+                                          data['area_name'], data['published_at'],
+                                          Salary(data['salary_from'], data['salary_to'],
+                                                 data['salary_gross'], data['salary_currency'])))
+        if not self.vacs_list:
             print('Нет данных')
-        return vacancies_list
 
-    def csv_splitter(self):
-        """
-        Разделяет переданный csv файл по годам
-        :return: None
-        """
-        data = pd.read_csv(self.file_name)
-        years = data['published_at'].str[:4].unique()
-        for year in years:
-            os.makedirs('years', exist_ok=True)
-            data[data['published_at'].str[:4] == year].to_csv(f'years/{year}.csv')

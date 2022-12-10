@@ -1,9 +1,8 @@
 import os
-
-from DataSet import DataSet
 from Report import Report
 from Statistics import Statistic
 from Table import Table
+from csv_splitter import csv_splitter
 
 russian = {
     "name": "Название",
@@ -38,61 +37,80 @@ russian = {
     "False": "Нет",
 }
 
+
 class InputConnect:
-    """ Класс-интерфейс для сбора вводимой информации пользователем для последующего использования
-    """
+    """ Класс-интерфейс для сбора вводимой информации пользователем для последующего использования"""
+
     def __init__(self):
         """Инициализирует объект класса InputConnect"""
-        selection = input('Вакансии или Статистика: ').strip()
-        if selection == "  Вакансии".strip():
-            self.file_name = input('Введите название файла: ').strip()
-            self.filter_data = list(filter(lambda e: e != "", input('Введите параметр фильтрации: ').split(': ')))
-            self.sort_key = input('Введите параметр сортировки: ').strip()
-            self.is_reversed_sort = input('Обратный порядок сортировки (Да / Нет): ').strip()
-            self.table_ranges = list(map(int, input('Введите диапазон вывода: ').split()))
-            self.fields = list(filter(lambda e: e != "", input('Введите требуемые столбцы: ').split(', ')))
-            self.__translation: dict[str, str] = russian
-            if self.is_valid(True):
-                self.table = Table(self.file_name, self.filter_data, self.sort_key, self.is_reversed_sort,
-                                   self.table_ranges, self.fields, russian)
-                self.table.filter_vacancies()
-                self.table.sort_vacancies()
-                self.table.print_table()
+        # selection = input('Вакансии или Статистика: ').strip()
+        selection = 'Статистика'
+        if selection == "Вакансии".strip():
+            self.print_vacs()
         elif selection == "Статистика":
-            self.file_name = input('Введите название файла: ').strip()
-            self.work_name = input('Введите название профессии: ').strip()
-            if self.is_valid():
-                dataset: DataSet = DataSet(self.file_name)
-                stats = Statistic(dataset, self.work_name)
-                stats.print_statistic()
-                report = Report(stats)
-                report.generate_excel()
-                report.generate_image()
-                report.generate_pdf()
+            self.get_stats()
 
-    def is_valid(self, isTable=False) -> bool:
+    def get_stats(self):
+        folder = 'vby'
+        work_name = 'аналитик'
+        folder = input('Введите название папки с csv файлами: ').strip()
+        work_name = input('Введите название профессии: ').strip()
+        csv_splitter(folder + '.csv') if not os.path.exists(folder) else None
+        stats = Statistic(folder, work_name)
+        stats.get_statistics()
+        stats.get_city_stats()
+        stats.print_statistic()
+        report = Report(stats)
+        report.generate_excel()
+        report.generate_image()
+        report.generate_pdf()
+
+    def print_vacs(self):
+        file_name = input('Введите название файла: ').strip()
+        filter_data = list(filter(lambda e: e != "", input('Введите параметр фильтрации: ').split(': ')))
+        sort_key = input('Введите параметр сортировки: ').strip()
+        is_reversed_sort = True if input('Обратный порядок сортировки (Да / Нет): ').strip() == 'Да' else False
+        table_ranges = list(map(int, input('Введите диапазон вывода: ').split()))
+        fields = list(filter(lambda e: e != "", input('Введите требуемые столбцы: ').split(', ')))
+        translation: dict[str, str] = russian
+        if self.is_valid(table={
+            'file_name': file_name,
+            'filter_data': filter_data,
+            'sort_key': sort_key,
+            'is_reversed_sort': is_reversed_sort,
+            'table_ranges': table_ranges,
+            'fields': fields,
+            'translation': translation
+        }):
+            table = Table(file_name.replace('.csv', ''), filter_data, sort_key, is_reversed_sort,
+                          table_ranges, fields, translation)
+            table.filter_vacancies()
+            table.sort_vacancies()
+            table.print_table()
+
+    def is_valid(self, table: dict) -> bool:
         """Проверяет валидность введенных данных
 
-        :param isTable: Проверка на тип выводимой информации
+        :param table: Проверка на тип выводимой информации
         :return: Валидны ли значения
         :rtype: bool
         """
-        if os.stat(self.file_name).st_size == 0:
+        if not os.path.exists(table['file_name']):
+            print("Файла не существует")
+            return False
+        if os.stat(table['file_name']).st_size == 0:
             print("Пустой файл")
             return False
-        if isTable:
-            if len(self.filter_data) == 1:
-                print('Формат ввода некорректен')
-                return False
-            elif len(self.filter_data) and not self.filter_data[0] in self.__translation.values():
-                print('Параметр поиска некорректен')
-                return False
-            elif self.sort_key and self.sort_key not in self.__translation.values():
-                print('Параметр сортировки некорректен')
-                return False
-            elif self.is_reversed_sort and self.is_reversed_sort != 'Да' and self.is_reversed_sort != 'Нет':
-                print('Порядок сортировки задан некорректно')
-                return False
+        if len(table['filter_data']) == 1:
+            print('Формат ввода некорректен')
+            return False
+        if len(table['filter_data']) and not table['filter_data'][0] in table['translation'].values():
+            print('Параметр поиска некорректен')
+            return False
+        if table['sort_key'] and table['sort_key'] not in table['translation'].values():
+            print('Параметр сортировки некорректен')
+            return False
+        if table['is_reversed_sort'] and table['is_reversed_sort'] != 'Да' and table['is_reversed_sort'] != 'Нет':
+            print('Порядок сортировки задан некорректно')
+            return False
         return True
-
-    

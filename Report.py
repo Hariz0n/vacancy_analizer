@@ -28,12 +28,12 @@ class Report:
         :type stats: Statistic
         """
         self.work_name = stats.work_name
-        self.salary: dict = stats.salary
-        self.salary_worker: dict = stats.salary_worker
-        self.count: dict = stats.count
-        self.count_worker: dict = stats.count_worker
-        self.salary_city: dict = stats.salary_city
-        self.city_perc: dict = stats.city_perc
+        self.salary: dict = stats.salary_by_year
+        self.salary_worker: dict = stats.salary_by_year
+        self.count: dict = stats.count_by_year
+        self.count_worker: dict = stats.work_count_by_year
+        self.salary_city: dict = stats.city_salary_by_year
+        self.city_perc: dict = stats.city_rate_by_year
 
     def generate_excel(self):
         """
@@ -138,7 +138,7 @@ class Report:
     def generate_pdf(self):
         """
         Создает pdf отчет с таблицами и графиком
-        :return:
+        :return: None
         """
         config = pdfkit.configuration(wkhtmltopdf=r'F:\Programs\wkhtmltopdf\bin\wkhtmltopdf.exe')
         env = Environment(loader=FileSystemLoader('.'))

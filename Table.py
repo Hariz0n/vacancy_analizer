@@ -1,10 +1,8 @@
 import re
-import time
 from datetime import datetime
 from prettytable import PrettyTable, ALL
 from DataSet import DataSet
 from Vacancy import Vacancy
-from dateutil import parser
 
 
 class Table:
@@ -51,6 +49,7 @@ class Table:
         self.__translation: dict[str, str] = translation
         self.__reversed_translation = dict([(v, k) for k, v in self.__translation.items()])
         self.dataset = DataSet(self.file_name)
+        self.dataset.csv_parser()
 
     def filter_vacancies(self):
         """
@@ -60,7 +59,7 @@ class Table:
         if not len(self.filter_data):
             return
         filtered: list[Vacancy] = []
-        for vac in self.dataset.vacancies_objects:
+        for vac in self.dataset.vacs_list:
             if self.__reversed_translation[self.filter_data[0]].startswith('salary_'):
                 vacancy_filter_value = getattr(vac.salary,
                                                self.__reversed_translation[self.filter_data[0]])
@@ -84,14 +83,14 @@ class Table:
             filtered.append(vac)
         if not filtered:
             print('Ничего не найдено')
-        self.dataset.vacancies_objects = filtered
+        self.dataset.vacs_list = filtered
 
     def sort_vacancies(self):
         """
         Сортирует вакансии по заданному критерию
         :return:
         """
-        if not self.sort_key and self.dataset.vacancies_objects:
+        if not self.sort_key and self.dataset.vacs_list:
             return
         is_reversed = True if self.is_reversed_sort == 'Да' else False
         if self.sort_key == self.__translation['key_skills']:
@@ -102,7 +101,7 @@ class Table:
                 return re.sub(r'\D', '', vac.experience_id)
         elif self.sort_key == self.__translation['salary']:
             def sort_func(vac: Vacancy):
-                return vac.salary.convert_currency_average()
+                return vac.salary.get_average_salary_rub()
         elif self.sort_key == self.__translation['published_at']:
             def sort_func(vac):
                 return datetime.strptime(getattr(vac, 'published_at'),
@@ -110,31 +109,33 @@ class Table:
         else:
             def sort_func(vac):
                 return getattr(vac, self.__reversed_translation[self.sort_key])
-        self.dataset.vacancies_objects.sort(key=sort_func, reverse=is_reversed)
+        self.dataset.vacs_list.sort(key=sort_func, reverse=is_reversed)
 
     def print_table(self):
         """
         Выводит таблицу с конечными с отфильтрованными и отсортированными данными
         :return: None
         """
-        if not self.dataset.vacancies_objects:
+        if not self.dataset.vacs_list:
             return
         table = PrettyTable()
         table.hrules = ALL
         table.align = 'l'
-        table.field_names = ['№', *[self.__translation[k] for k in self.dataset.vacancies_objects[0].__dict__.keys()]]
+        table.field_names = ['№', *[self.__translation[k] for k in self.dataset.vacs_list[0].__dict__.keys()]]
         table._max_width = {i: 20 for i in table.field_names}
         c = 1
         nl = '\n'
 
-        for vacancy in self.dataset.vacancies_objects:
+        for vacancy in self.dataset.vacs_list:
             row = [c]
             for header, value in vacancy.__dict__.items():
                 if header == 'key_skills':
                     row_value = nl.join(value)
                     row.append(f"{row_value[:100]}{'...' if len(row_value) > 100 else ''}")
                 elif header == 'published_at':
-                    row.append(self.date_by_cutting(value))
+                    row.append(self.date_by_format(value))
+                elif header == 'premium':
+                    row.append("Да" if value else "Нет")
                 elif header == 'salary':
                     row.append(
                         f'{"{:,}".format(value.salary_from).replace(",", " ")} - '
@@ -164,5 +165,5 @@ class Table:
     # def date_by_dateutils_parser(self, timestamp: str):
     #     return parser.parse(timestamp).strftime('%d:%m:%Y')
 
-    def date_by_cutting(self, timestamp: str):
-        return ".".join(timestamp[:10].split('-')[::-1])
+    def date_by_format(self, timestamp: datetime):
+        return timestamp.strftime("%d.%m.%Y")

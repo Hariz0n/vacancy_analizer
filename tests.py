@@ -32,7 +32,7 @@ class SalaryTests(TestCase):
 
     def test_correct_currency_convert(self):
         self.assertTrue(
-            Salary({'salary_from': 1000, 'salary_to': 1000, 'salary_currency': "USD"}).convert_currency_average(),
+            Salary({'salary_from': 1000, 'salary_to': 1000, 'salary_currency': "USD"}).get_average_salary_rub(),
             60660.0)
 
 
@@ -96,9 +96,9 @@ class StatisticTests(TestCase):
             dataset = DataSet('test.csv')
         except:
             self.fail('No such file: test.csv')
-        self.assertDictEqual(Statistic(dataset, 'Программист').salary,
+        self.assertDictEqual(Statistic(dataset, 'Программист').salary_by_year,
                              {2020: 10759, 2021: 210000, 2022: 209608})
-        self.assertDictEqual(Statistic(dataset, 'Программист').count,
+        self.assertDictEqual(Statistic(dataset, 'Программист').count_by_year,
                              {2020: 1, 2021: 1, 2022: 3})
         self.assertDictEqual(Statistic(dataset, 'Программист').city_perc,
                              {'Москва': 0.4, 'Минск': 0.4, 'Санкт-Петербург': 0.2})
