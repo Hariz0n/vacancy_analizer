@@ -1,3 +1,6 @@
+import numpy as np
+
+
 class Salary:
     """Класс, описывающий зарплату"""
     _currency_to_rub = {
@@ -19,12 +22,16 @@ class Salary:
         :param salary_currency: Валюта
         :type salary_currency: str
         """
-        self.salary_from = int(salary_from)
-        self.salary_to = int(salary_to)
+        self.salary_from = salary_from
+        self.salary_to = salary_to
         self.salary_gross = salary_gross
         self.salary_currency = salary_currency
-        self.salary_average = int((self.salary_from + self.salary_to) / 2) \
-            if self.salary_from and self.salary_to else None
+        if not np.isnan(self.salary_from) and not np.isnan(self.salary_to):
+            self.salary_average = int((self.salary_from + self.salary_to) / 2)
+        elif not np.isnan(self.salary_from):
+            self.salary_average = int(salary_from)
+        elif not np.isnan(self.salary_to):
+            self.salary_average = int(salary_to)
 
     def get_average_salary_rub(self):
         """ Метод конвертации среднее зарплаты в рубли

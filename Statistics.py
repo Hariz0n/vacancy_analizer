@@ -1,7 +1,7 @@
 from DataSet import DataSet
 import os
 import multiprocessing as mp
-
+import concurrent.futures as pool
 
 class Statistic:
     def __init__(self, folder: str, work_name: str):
@@ -42,7 +42,7 @@ class Statistic:
             total[year][1] += 1
         return total, work
 
-    def get_statistics_async(self):
+    def get_statistics_async_m(self):
         """Метод получения статистики асинхронно
 
         :return: None
@@ -51,6 +51,21 @@ class Statistic:
             self.datasets.append(DataSet(f"{self.folder}/{csv_file.replace('.csv', '')}"))
         with mp.Pool() as pl:
             stats = pl.map(self._get_stats_from_csv, self.datasets)
+        data = {"total": {}, "work": {}}
+        for t, w in stats:
+            data["total"].update(t)
+            data["work"].update(w)
+        self.salary_by_year, self.work_salary_by_year, self.count_by_year, self.work_count_by_year = \
+            self.format_salary_count(data)
+
+    def get_statistics_async_c(self):
+        """Метод получения статистики асинхронно
+
+        :return: None
+        """
+        for csv_file in os.listdir(self.folder):
+            self.datasets.append(DataSet(f"{self.folder}/{csv_file.replace('.csv', '')}"))
+        stats = pool.ProcessPoolExecutor().map(self._get_stats_from_csv, self.datasets)
         data = {"total": {}, "work": {}}
         for t, w in stats:
             data["total"].update(t)
