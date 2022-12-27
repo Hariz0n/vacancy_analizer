@@ -17,3 +17,4 @@
 Я не до конца понял как именно должно быть реализовано обработка csv файла, поэтому я сделал это в отдельном файле (CBRApi.py)
 ![Screenshot_12](https://user-images.githubusercontent.com/55204364/209646916-61144699-5726-4cc1-887c-ff5aa740c450.png)
 ![Screenshot_15](https://user-images.githubusercontent.com/55204364/209646964-edec33b9-111e-407a-b417-f5e5349dcbb5.png)
+[curs.csv](https://github.com/Hariz0n/vacancy_analizer/files/10307349/curs.csv)
