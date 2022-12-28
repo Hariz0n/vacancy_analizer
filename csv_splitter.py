@@ -8,7 +8,7 @@ def csv_splitter(file_name: str):
     Разделяет переданный csv файл по годам
     :return: None
     """
-    data = pd.read_csv(file_name, index_col=0, engine="pyarrow").dropna()
+    data = pd.read_csv(file_name, index_col=0, engine="pyarrow")
     name = file_name.replace('.csv', '')
     years = data['published_at'].dt.year.unique()
     os.makedirs(name, exist_ok=True)
