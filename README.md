@@ -32,8 +32,8 @@
 ### Файл с вакансиями из HH
 [HeadHunter Vacs.csv](https://github.com/Hariz0n/vacancy_analizer/files/10313867/HeadHunter.Vacs.csv)
 
-## 3.4.4
-Файл pdf со статистикой
+## 3.4.3
+### Файл pdf со статистикой
 [report.pdf](https://github.com/Hariz0n/vacancy_analizer/files/10315424/report.pdf)
 ![pdf1](https://user-images.githubusercontent.com/55204364/209847655-4378ae2a-efa1-41f3-8bc7-34822e3c239e.png)
 ![pdf2](https://user-images.githubusercontent.com/55204364/209847672-21e9d949-dc21-4e1f-8975-bbfc2cb7f877.png)
