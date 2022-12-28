@@ -27,13 +27,14 @@ class Report:
         :param stats: Статистика
         :type stats: Statistic
         """
+        # print(stats.salary_mean, stats.count, stats.worker_mean, stats.worker_count, stats.city_perc, sep='\n\n')
         self.work_name = stats.work_name
-        self.salary: dict = stats.salary_by_year
-        self.salary_worker: dict = stats.salary_by_year
-        self.count: dict = stats.count_by_year
-        self.count_worker: dict = stats.work_count_by_year
-        self.salary_city: dict = stats.city_salary_by_year
-        self.city_perc: dict = stats.city_rate_by_year
+        self.salary: dict = stats.salary_mean
+        self.salary_worker: dict = stats.worker_mean
+        self.count: dict = stats.count
+        self.count_worker: dict = stats.worker_count
+        self.salary_city: dict = stats.city_salary
+        self.city_perc: dict = stats.city_perc
 
     def generate_excel(self):
         """
@@ -59,6 +60,7 @@ class Report:
         # Статистика по городам
         wb_cities = wb.create_sheet('Статистика по городам')
         wb_cities.append(["Город", "Уровень зарплат", "", "Город", "Доля вакансий"])
+        print(self.salary_city, self.city_perc)
         for (city, salary), (city2, perc) in zip(self.salary_city.items(), self.city_perc.items()):
             wb_cities.append([city, salary, '', city2, perc])
 

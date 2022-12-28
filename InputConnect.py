@@ -1,8 +1,7 @@
 import os
+import pandas as pd
 from Report import Report
 from Statistics import Statistic
-from Table import Table
-from csv_splitter import csv_splitter
 
 russian = {
     "name": "Название",
@@ -43,74 +42,44 @@ class InputConnect:
 
     def __init__(self):
         """Инициализирует объект класса InputConnect"""
-        # selection = input('Вакансии или Статистика: ').strip()
-        selection = 'Статистика'
-        if selection == "Вакансии".strip():
-            self.print_vacs()
-        elif selection == "Статистика":
-            self.get_stats()
+        while True:
+            # file_name = input('Введите название файла: ')
+            file_name = 'vacancies_dif_currencies.csv'
+            if os.path.exists(file_name) and os.path.splitext(file_name)[1] == '.csv':
+                self.fileName, self.fileExtension = os.path.splitext(file_name)
+                break
+            print('Введено неверное название файла! Попробуйте снова')
+        self.work_name = 'аналитик'
+        # self.work_name = input('Введите название профессии: ')
+        self.get_stats()
+
 
     def get_stats(self):
-        folder = 'vby'
-        work_name = 'аналитик'
-        folder = input('Введите название папки с csv файлами: ').strip()
-        work_name = input('Введите название профессии: ').strip()
-        csv_splitter(folder + '.csv') if not os.path.exists(folder) else None
-        stats = Statistic(folder, work_name)
-        stats.get_statistics()
-        stats.get_city_stats()
+        InputConnect.csv_splitter(self.fileName + self.fileExtension) \
+            if not os.path.exists(self.fileName) else None
+        stats = Statistic(self.fileName, self.work_name)
+        stats.getData()
+        stats.getStatistics()
         stats.print_statistic()
         report = Report(stats)
         report.generate_excel()
         report.generate_image()
         report.generate_pdf()
 
-    def print_vacs(self):
-        file_name = input('Введите название файла: ').strip()
-        filter_data = list(filter(lambda e: e != "", input('Введите параметр фильтрации: ').split(': ')))
-        sort_key = input('Введите параметр сортировки: ').strip()
-        is_reversed_sort = True if input('Обратный порядок сортировки (Да / Нет): ').strip() == 'Да' else False
-        table_ranges = list(map(int, input('Введите диапазон вывода: ').split()))
-        fields = list(filter(lambda e: e != "", input('Введите требуемые столбцы: ').split(', ')))
-        translation: dict[str, str] = russian
-        if self.is_valid(table={
-            'file_name': file_name,
-            'filter_data': filter_data,
-            'sort_key': sort_key,
-            'is_reversed_sort': is_reversed_sort,
-            'table_ranges': table_ranges,
-            'fields': fields,
-            'translation': translation
-        }):
-            table = Table(file_name.replace('.csv', ''), filter_data, sort_key, is_reversed_sort,
-                          table_ranges, fields, translation)
-            table.filter_vacancies()
-            table.sort_vacancies()
-            table.print_table()
-
-    def is_valid(self, table: dict) -> bool:
-        """Проверяет валидность введенных данных
-
-        :param table: Проверка на тип выводимой информации
-        :return: Валидны ли значения
-        :rtype: bool
+    @staticmethod
+    def csv_splitter(file_name: str):
         """
-        if not os.path.exists(table['file_name']):
-            print("Файла не существует")
-            return False
-        if os.stat(table['file_name']).st_size == 0:
-            print("Пустой файл")
-            return False
-        if len(table['filter_data']) == 1:
-            print('Формат ввода некорректен')
-            return False
-        if len(table['filter_data']) and not table['filter_data'][0] in table['translation'].values():
-            print('Параметр поиска некорректен')
-            return False
-        if table['sort_key'] and table['sort_key'] not in table['translation'].values():
-            print('Параметр сортировки некорректен')
-            return False
-        if table['is_reversed_sort'] and table['is_reversed_sort'] != 'Да' and table['is_reversed_sort'] != 'Нет':
-            print('Порядок сортировки задан некорректно')
-            return False
-        return True
+        Разделяет переданный csv файл по годам
+        :return: None
+        """
+        data = pd.read_csv(file_name, index_col=0, engine="pyarrow")
+        name = file_name.replace('.csv', '')
+        years = data['published_at'].dt.year.unique()
+        os.makedirs(name, exist_ok=True)
+        for year in [y for y in years if y is not None]:
+            if not year:
+                continue
+            data[data['published_at'].dt.year == year].to_csv(f'{name}/{year}.csv')
+
+
+
