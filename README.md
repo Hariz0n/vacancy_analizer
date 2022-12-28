@@ -24,6 +24,6 @@
 ### Файла с курсами валют:
 [curs.csv](https://github.com/Hariz0n/vacancy_analizer/files/10307349/curs.csv)
 
-## 3.2.2
+## 3.3.2
 ### Файл со 100-ми первыми вакансиями
 [first-one-hundred.csv](https://github.com/Hariz0n/vacancy_analizer/files/10313404/first-one-hundred.csv)
