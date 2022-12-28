@@ -24,7 +24,6 @@ class Salary:
         """
         self.salary_from = salary_from
         self.salary_to = salary_to
-        self.salary_gross = salary_gross
         self.salary_currency = salary_currency
         if not np.isnan(self.salary_from) and not np.isnan(self.salary_to):
             self.salary_average = int((self.salary_from + self.salary_to) / 2)
