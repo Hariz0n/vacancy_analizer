@@ -27,3 +27,7 @@
 ## 3.3.2
 ### Файл со 100-ми первыми вакансиями
 [first-one-hundred.csv](https://github.com/Hariz0n/vacancy_analizer/files/10313404/first-one-hundred.csv)
+
+## 3.3.3
+### Файл с вакансиями из HH
+[HeadHunter Vacs.csv](https://github.com/Hariz0n/vacancy_analizer/files/10313867/HeadHunter.Vacs.csv)
