@@ -38,9 +38,8 @@ class DataSet:
             salary = row['salary_to']
         else:
             salary = None
-
         if salary is None or row['salary_currency'] == 'RUR' or \
                 row['salary_currency'] not in currencies.columns or \
                 isnull(currencies.loc[row['published_at'].strftime('%Y-%m')][row['salary_currency']]):
-            return salary
+            return None
         return int(salary * currencies.loc[row['published_at'].strftime('%Y-%m')][row['salary_currency']])

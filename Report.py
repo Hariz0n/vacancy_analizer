@@ -1,6 +1,7 @@
 from Statistics import Statistic
 import numpy as np
 from matplotlib import pyplot as plt
+from matplotlib import figure
 from openpyxl import Workbook
 from openpyxl.utils import get_column_letter
 from openpyxl.styles import Font, Side, Border
@@ -29,12 +30,15 @@ class Report:
         """
         # print(stats.salary_mean, stats.count, stats.worker_mean, stats.worker_count, stats.city_perc, sep='\n\n')
         self.work_name = stats.work_name
+        self.area = stats.area
         self.salary: dict = stats.salary_mean
         self.salary_worker: dict = stats.worker_mean
         self.count: dict = stats.count
         self.count_worker: dict = stats.worker_count
         self.salary_city: dict = stats.city_salary
         self.city_perc: dict = stats.city_perc
+        self.worker_area_mean: dict = stats.worker_area_mean
+        self.worker_area_count: dict = stats.worker_area_count
 
     def generate_excel(self):
         """
@@ -60,7 +64,6 @@ class Report:
         # Статистика по городам
         wb_cities = wb.create_sheet('Статистика по городам')
         wb_cities.append(["Город", "Уровень зарплат", "", "Город", "Доля вакансий"])
-        print(self.salary_city, self.city_perc)
         for (city, salary), (city2, perc) in zip(self.salary_city.items(), self.city_perc.items()):
             wb_cities.append([city, salary, '', city2, perc])
 
@@ -98,7 +101,7 @@ class Report:
         pos = np.arange(len(self.salary.keys()))
         plt.rc('font', size=8)
         width = 0.35
-        fig, ((salary, count), (city_s, city_p)) = plt.subplots(2, 2)
+        fig, ((salary, count), (city_s, city_p), (area_salary, area_count)) = plt.subplots(3, 2, figsize=(8, 11))
 
         # Уровень зарплат по годам
         salary.bar(pos - width / 2, self.salary.values(), width, label='Средняя з/п')
@@ -134,6 +137,21 @@ class Report:
         city_p.pie(pie_data, labels=labels, textprops={'fontsize': 6})
         city_p.set_title('Доля вакансий по городам', fontsize=12)
 
+        # Динамика уровня зарплат по годам для выбранной профессии и региона
+        area_salary.bar(np.arange(len(self.worker_area_mean.keys())), self.worker_area_mean.values(), width, label=f'з/п \n{self.work_name}\n{self.area}')
+        area_salary.set_title(f'Уровень зарплат по годам\nдля {self.work_name} в {self.area}', fontsize=12)
+        area_salary.set_xticks(np.arange(len(self.worker_area_mean.keys())), self.worker_area_mean.keys(), rotation=90)
+        area_salary.legend()
+        area_salary.grid(axis='y')
+
+        # Динамика количества вакансий по годам для выбранной профессии и региона
+        area_count.bar(np.arange(len(self.worker_area_count.keys())), self.worker_area_count.values(), width, label=f'Количество вакансий\n{self.work_name}\n{self.area}')
+        area_count.set_title(f'Количество вакансий по годам\nдля {self.work_name} в {self.area}', fontsize=12)
+        area_count.set_xticks(np.arange(len(self.worker_area_count.keys())), self.worker_area_count.keys(), rotation=90)
+        area_count.locator_params(axis='y', nbins=5)
+        area_count.legend()
+        area_count.grid(axis='y')
+
         fig.tight_layout()
         plt.savefig('graph.png', dpi=300)
 
@@ -159,6 +177,14 @@ class Report:
                      f'<th>Город</th>' \
                      f'<th>Доля вакансий</th>' \
                      f'</tr>\n'
+        table_salary_work = f'<tr>' \
+                       f'<th>Год</th>' \
+                       f'<th>Уровень зарплат</th>' \
+                       f'</tr>\n'
+        table_perc_work = f'<tr>' \
+                     f'<th>Год</th>' \
+                     f'<th>Количество</th>' \
+                     f'</tr>\n'
         for year in self.salary:
             table_general += f'<tr>' \
                              f'<td>{year}</th>' \
@@ -170,12 +196,22 @@ class Report:
         for city in self.salary_city:
             table_salary += f'<tr>' \
                              f'<td>{city}</th>' \
-                             f'<td>{self.salary_city[city]}</th>' \
+                             f'<td>{self.salary_city[city]:.2f}</th>' \
                              f'</tr>\n'
         for city in self.city_perc:
             table_perc += f'<tr>' \
                          f'<td>{city}</th>' \
                          f'<td>{f"{self.city_perc[city]*100:.2f}"}%</th>' \
+                         f'</tr>\n'
+        for city in self.worker_area_mean:
+            table_salary_work += f'<tr>' \
+                             f'<td>{city}</th>' \
+                             f'<td>{self.worker_area_mean[city]}</th>' \
+                             f'</tr>\n'
+        for city in self.worker_area_count:
+            table_perc_work += f'<tr>' \
+                         f'<td>{city}</th>' \
+                         f'<td>{f"{self.worker_area_count[city]}"}</th>' \
                          f'</tr>\n'
         template = env.get_template("pdf_template.html")
         pdf_template = template.render(
@@ -183,5 +219,7 @@ class Report:
              'image_file': 'graph.png',
              'table_general': table_general,
              'table_salary': table_salary,
-             'table_perc': table_perc})
+             'table_perc': table_perc,
+             'table_salary_work': table_salary_work,
+             'table_perc_work': table_perc_work})
         pdfkit.from_string(pdf_template, 'report.pdf', configuration=config, options={'enable-local-file-access': True})

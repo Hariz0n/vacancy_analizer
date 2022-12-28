@@ -38,7 +38,7 @@ russian = {
 
 
 class InputConnect:
-    """ Класс-интерфейс для сбора вводимой информации пользователем для последующего использования"""
+    """Класс-интерфейс для сбора вводимой информации пользователем для последующего использования"""
 
     def __init__(self):
         """Инициализирует объект класса InputConnect"""
@@ -51,13 +51,19 @@ class InputConnect:
             print('Введено неверное название файла! Попробуйте снова')
         self.work_name = 'аналитик'
         # self.work_name = input('Введите название профессии: ')
+        self.area = 'Екатеринбург'
+        # self.area = input('Введите название региона: ')
         self.get_stats()
 
 
     def get_stats(self):
+        """
+        Метод вывода трансформации и вывода данных
+        :return:
+        """
         InputConnect.csv_splitter(self.fileName + self.fileExtension) \
             if not os.path.exists(self.fileName) else None
-        stats = Statistic(self.fileName, self.work_name)
+        stats = Statistic(self.fileName, self.work_name, self.area)
         stats.getData()
         stats.getStatistics()
         stats.print_statistic()
