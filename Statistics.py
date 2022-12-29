@@ -1,8 +1,11 @@
+import pandas
+
 from DataSet import DataSet
 from pandas import DataFrame, concat
 import os
 import multiprocessing as mp
-
+from db import DB
+db = DB()
 class Statistic:
     data: DataFrame
     def __init__(self, folder: str, work_name: str, area: str):
@@ -33,9 +36,14 @@ class Statistic:
         paths = list(map(lambda e: f"{self.folder}/{e}",os.listdir(self.folder)))
         print(self.folder, paths)
         with mp.Pool() as pl:
-            self.data = concat(list(map(lambda e: e.vacs_list, pl.map(DataSet, paths)))).dropna()
+            self.data = concat(list(map(lambda e: e.vacs_list, pl.map(DataSet, paths))))
+            db.addData(self.data, 'vacancies')
 
     def getStatistics(self):
+        """
+        Метод анализа данных. Сохраняется статистику в инстанс класса
+        :return: словари статистик
+        """
         if self.data is None:
             return
         self.salary_mean = self.data.groupby(self.data['published_at'].map(lambda x: x.year))['salary'].mean().astype(int).to_dict()

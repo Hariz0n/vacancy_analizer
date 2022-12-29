@@ -1,6 +1,5 @@
 import sqlite3
-
-import pandas as pd
+from threading import Lock
 from pandas import DataFrame
 
 
@@ -15,4 +14,9 @@ class DB:
         self.cur = self.con.cursor()
 
     def addData(self, df: DataFrame, table_name: str):
-        df.to_sql(table_name, self.con, if_exists='append', index_label='date')
+        """Метод создания таблицы и добавления в нее данных
+        :param df: ДадаФрейм с данными, которые необходимо добавить
+        :param table_name: название таблицы в БД
+        :return: Ничего
+        """
+        df.to_sql(table_name, self.con, if_exists='replace', index_label='date')

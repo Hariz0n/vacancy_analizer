@@ -1,7 +1,8 @@
-from Vacancy import Vacancy
+import pandas as pd
 from pandas import read_csv, DataFrame, isnull
+from db import DB
 
-currencies = read_csv('curs.csv', engine='pyarrow', index_col=0)
+currencies = pd.read_sql('SELECT * from currencies', DB().con, index_col=['date'])
 
 
 class DataSet:
@@ -21,6 +22,7 @@ class DataSet:
         data = read_csv(self.file_path, engine="pyarrow")
         data['salary'] = data.apply(DataSet.get_salary, axis=1)
         data = data[['name', 'salary', 'area_name', 'published_at']]
+        # DB().addData(data, 'vacancies')
         return data
 
     @staticmethod
@@ -38,8 +40,9 @@ class DataSet:
             salary = row['salary_to']
         else:
             salary = None
-        if salary is None or row['salary_currency'] == 'RUR' or \
-                row['salary_currency'] not in currencies.columns or \
+        if row['salary_currency'] == 'RUR':
+            return salary
+        if salary is None or row['salary_currency'] not in currencies.columns or \
                 isnull(currencies.loc[row['published_at'].strftime('%Y-%m')][row['salary_currency']]):
             return None
         return int(salary * currencies.loc[row['published_at'].strftime('%Y-%m')][row['salary_currency']])
