@@ -43,5 +43,5 @@
 ![Screenshot_16](https://user-images.githubusercontent.com/55204364/209948396-fdc1ad59-82e5-481e-86e6-4dee07be189e.png)
 
 ### SQlite БД
-![sqlite.db](https://drive.google.com/file/d/1H4eJSESroQHgQMr3Xbvz6pnn7kKMoEAZ/view?usp=sharing)
+https://drive.google.com/file/d/1H4eJSESroQHgQMr3Xbvz6pnn7kKMoEAZ/view?usp=sharing
 
