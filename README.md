@@ -39,3 +39,9 @@
 ### Файл pdf со статистикой
 [report.pdf](https://github.com/Hariz0n/vacancy_analizer/files/10315424/report.pdf)
 
+## 3.5.1
+![Screenshot_16](https://user-images.githubusercontent.com/55204364/209948396-fdc1ad59-82e5-481e-86e6-4dee07be189e.png)
+
+### SQlite БД
+https://drive.google.com/file/d/1H4eJSESroQHgQMr3Xbvz6pnn7kKMoEAZ/view?usp=sharing
+
