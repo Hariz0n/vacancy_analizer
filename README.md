@@ -45,3 +45,8 @@
 ### SQlite БД
 https://drive.google.com/file/d/1H4eJSESroQHgQMr3Xbvz6pnn7kKMoEAZ/view?usp=sharing
 
+## 3.5.2
+![Screenshot_17](https://user-images.githubusercontent.com/55204364/209949935-aa568da6-7970-4af9-af72-8281eaf63845.png)
+
+
+
