@@ -30,7 +30,7 @@ class CBRApi:
             result.to_csv('curs.csv', index_label='date')
             return result
 
-        DB().addData(result)
+        DB().addData(result, 'currencies')
         result[needed_curs].to_csv('curs.csv', index_label='date')
         return result[needed_curs]
 

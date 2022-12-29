@@ -14,5 +14,5 @@ class DB:
         self.con = sqlite3.connect('db.sqlite')
         self.cur = self.con.cursor()
 
-    def addData(self, df: DataFrame):
-        df.to_sql('currencies', self.con, if_exists='append', index_label='date')
+    def addData(self, df: DataFrame, table_name: str):
+        df.to_sql(table_name, self.con, if_exists='append', index_label='date')
