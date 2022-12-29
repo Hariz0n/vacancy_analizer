@@ -1,6 +1,7 @@
 from datetime import datetime
 import requests
 import pandas as pd
+from db import DB
 
 
 class CBRApi:
@@ -29,11 +30,12 @@ class CBRApi:
             result.to_csv('curs.csv', index_label='date')
             return result
 
+        DB().addData(result)
         result[needed_curs].to_csv('curs.csv', index_label='date')
         return result[needed_curs]
 
 
-data = pd.read_csv('vdc.csv', engine='pyarrow')
+data = pd.read_csv('vacancies_dif_currencies.csv', engine='pyarrow')
 data = data[data.groupby("salary_currency")['salary_currency'].transform('size') > 5000]\
     .sort_values(['published_at'])
 earliest = data.iloc[0]['published_at']
