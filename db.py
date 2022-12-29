@@ -13,10 +13,18 @@ class DB:
         self.con = sqlite3.connect('db.sqlite')
         self.cur = self.con.cursor()
 
-    def addData(self, df: DataFrame, table_name: str):
-        """Метод создания таблицы и добавления в нее данных
-        :param df: ДадаФрейм с данными, которые необходимо добавить
+    def addCurrenciesData(self, df: DataFrame, table_name: str):
+        """Метод создания таблицы валют и добавления в нее данных
+        :param df: ДадаФрейм с валютами
         :param table_name: название таблицы в БД
         :return: Ничего
         """
         df.to_sql(table_name, self.con, if_exists='replace', index_label='date')
+
+    def addVacanciesData(self, df: DataFrame, table_name: str):
+        """Метод создания таблицы вакансий и добавления в нее данных
+        :param df: ДадаФрейм с вакансиями
+        :param table_name: название таблицы в БД
+        :return: Ничего
+        """
+        df.to_sql(table_name, self.con, if_exists='replace')
